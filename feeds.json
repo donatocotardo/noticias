@@ -15,6 +15,5 @@
   {"nombre": "Xataka", "categoria": "tecnologia", "url": "https://feeds.weblogssl.com/xataka2"},
   {"nombre": "Genbeta", "categoria": "tecnologia", "url": "https://feeds.weblogssl.com/genbeta"},
   {"nombre": "El País - Tecnología", "categoria": "tecnologia", "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada"},
-  {"nombre": "Hacker News", "categoria": "tecnologia", "url": "https://news.ycombinator.com/rss"},
   {"nombre": "3DJuegos", "categoria": "videojuegos", "url": "https://www.3djuegos.com/feedburner.xml"}
 ]

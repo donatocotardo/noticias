@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 import feedparser
@@ -9,6 +10,14 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (agente-noticias)"}
 
 def cargar_feeds(ruta: str = "feeds.json") -> list[dict]:
     return json.loads(Path(ruta).read_text(encoding="utf-8"))
+
+
+def _fecha(entrada) -> datetime | None:
+    """feedparser entrega la fecha ya normalizada a UTC en *_parsed."""
+    t = entrada.get("published_parsed") or entrada.get("updated_parsed")
+    if not t:
+        return None
+    return datetime(*t[:6], tzinfo=timezone.utc)
 
 
 def leer_feed(feed: dict) -> list[dict]:
@@ -31,6 +40,7 @@ def leer_feed(feed: dict) -> list[dict]:
                 "enlace": e.get("link", ""),
                 "resumen": e.get("summary", "").strip(),
                 "fecha": e.get("published", ""),
+                "fecha_dt": _fecha(e),
             }
         )
     return noticias
