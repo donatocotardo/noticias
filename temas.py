@@ -40,8 +40,9 @@ def normalizar(texto: str) -> str:
 
 
 def limpiar_html(texto: str) -> str:
-    texto = re.sub(r"<[^>]+>", " ", texto)
-    return re.sub(r"\s+", " ", html.unescape(texto)).strip()
+    for _ in range(2):  # dos pasadas: algunos feeds escapan las etiquetas
+        texto = html.unescape(re.sub(r"<[^>]+>", " ", texto))
+    return re.sub(r"\s+", " ", texto).strip()
 
 
 def _coincide(palabra: str, texto: str) -> bool:

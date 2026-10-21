@@ -1,4 +1,6 @@
 import os
+import time
+
 import requests
 from dotenv import load_dotenv
 
@@ -20,6 +22,12 @@ def enviar_mensaje(texto: str) -> None:
         timeout=15,
     )
     r.raise_for_status()
+
+
+def enviar_mensajes(mensajes: list[str]) -> None:
+    for m in mensajes:
+        enviar_mensaje(m)
+        time.sleep(1)
 
 
 if __name__ == "__main__":

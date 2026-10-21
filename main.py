@@ -1,5 +1,6 @@
 import argparse
 
+from mensaje import formatear
 from noticias import obtener_todas
 from resumidor import resumir
 from seleccion import (
@@ -10,10 +11,13 @@ from seleccion import (
     quitar_vistas,
     solo_recientes,
 )
+from utils import enviar_mensajes
 from temas import cargar_temas, filtrar
 
+MAX_ENVIO = 12
 
-def main(marcar: bool) -> None:
+
+def main(enviar: bool) -> None:
     temas = cargar_temas()
     todas = obtener_todas()
 
@@ -34,24 +38,30 @@ def main(marcar: bool) -> None:
     if not candidatas:
         return
 
-    elegidas = resumir(candidatas, temas)
-
+    elegidas = resumir(candidatas, temas)[:MAX_ENVIO]
     for n in elegidas:
+        extra = f" (también en {', '.join(n['tambien_en'])})" if n["tambien_en"] else ""
         print(f"[{n['relevancia']}/10] {n['titulo']}")
         print(f"    {n['resumen_llm']}")
-        print(f"    {n['fuente']} - {n['enlace']}\n")
+        print(f"    {n['fuente']}{extra} - {n['enlace']}\n")
 
-    if marcar:
-        marcar_vistas(candidatas, vistas)
-        guardar_vistas(vistas)
-        print("seen.json actualizado")
+    if not enviar:
+        print("(prueba: no se ha enviado ni guardado nada)")
+        return
+
+    if elegidas:
+        enviar_mensajes(formatear(elegidas))
+        print("Enviado por Telegram")
+    marcar_vistas(candidatas, vistas)
+    guardar_vistas(vistas)
+    print("seen.json actualizado")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--marcar",
+        "--enviar",
         action="store_true",
-        help="guardar las noticias evaluadas en seen.json",
+        help="enviar por Telegram y guardar las noticias evaluadas en seen.json",
     )
-    main(parser.parse_args().marcar)
+    main(parser.parse_args().enviar)

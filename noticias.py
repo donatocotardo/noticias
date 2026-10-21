@@ -5,6 +5,8 @@ from pathlib import Path
 import feedparser
 import requests
 
+from temas import limpiar_html
+
 HEADERS = {"User-Agent": "Mozilla/5.0 (agente-noticias)"}
 
 
@@ -36,7 +38,7 @@ def leer_feed(feed: dict) -> list[dict]:
             {
                 "fuente": feed["nombre"],
                 "categoria": feed.get("categoria", ""),
-                "titulo": e.get("title", "").strip(),
+                "titulo": limpiar_html(e.get("title", "")),
                 "enlace": e.get("link", ""),
                 "resumen": e.get("summary", "").strip(),
                 "fecha": e.get("published", ""),
