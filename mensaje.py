@@ -20,3 +20,15 @@ def formatear(elegidas: list[dict]) -> list[str]:
             actual += "\n\n" + bloque
     mensajes.append(actual)
     return mensajes
+
+def trocear(bloques: list[str], cabecera: str) -> list[str]:
+    """Une bloques en mensajes que caben en el límite de Telegram."""
+    mensajes, actual = [], cabecera
+    for b in bloques:
+        if len(actual) + len(b) + 2 > LIMITE:
+            mensajes.append(actual)
+            actual = b
+        else:
+            actual += "\n\n" + b
+    mensajes.append(actual)
+    return mensajes
