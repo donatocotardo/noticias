@@ -1,0 +1,20 @@
+[
+  {"nombre": "BBC Mundo", "categoria": "actualidad", "url": "https://feeds.bbci.co.uk/mundo/rss.xml"},
+  {"nombre": "El País", "categoria": "actualidad", "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada"},
+  {"nombre": "El Progreso - Lugo", "categoria": "local", "url": "https://www.elprogreso.es/rss/lugo/"},
+  {"nombre": "El Progreso - Galicia", "categoria": "local", "url": "https://www.elprogreso.es/rss/galicia/"},
+  {"nombre": "El Progreso - Deporte general", "categoria": "deporte", "url": "https://www.elprogreso.es/rss/deporte-general/"},
+  {"nombre": "El Progreso - Baloncesto", "categoria": "baloncesto", "url": "https://www.elprogreso.es/rss/baloncesto/"},
+  {"nombre": "Marca - Portada", "categoria": "deporte", "url": "https://e00-marca.uecdn.es/rss/portada.xml"},
+  {"nombre": "Marca - Primera División", "categoria": "futbol", "url": "https://e00-marca.uecdn.es/rss/futbol/primera-division.xml"},
+  {"nombre": "Marca - Celta", "categoria": "futbol", "url": "https://e00-marca.uecdn.es/rss/futbol/celta.xml"},
+  {"nombre": "Marca - Deportivo", "categoria": "futbol", "url": "https://e00-marca.uecdn.es/rss/futbol/deportivo.xml"},
+  {"nombre": "Marca - Champions League", "categoria": "futbol", "url": "https://e00-marca.uecdn.es/rss/futbol/champions-league.xml"},
+  {"nombre": "Marca - Liga Endesa (ACB)", "categoria": "baloncesto", "url": "https://e00-marca.uecdn.es/rss/baloncesto/acb.xml"},
+  {"nombre": "Marca - NBA", "categoria": "baloncesto", "url": "https://e00-marca.uecdn.es/rss/baloncesto/nba.xml"},
+  {"nombre": "Xataka", "categoria": "tecnologia", "url": "https://feeds.weblogssl.com/xataka2"},
+  {"nombre": "Genbeta", "categoria": "tecnologia", "url": "https://feeds.weblogssl.com/genbeta"},
+  {"nombre": "El País - Tecnología", "categoria": "tecnologia", "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada"},
+  {"nombre": "Hacker News", "categoria": "tecnologia", "url": "https://news.ycombinator.com/rss"},
+  {"nombre": "3DJuegos", "categoria": "videojuegos", "url": "https://www.3djuegos.com/feedburner.xml"}
+]
