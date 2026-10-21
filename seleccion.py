@@ -1,8 +1,13 @@
 import json
+import os
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-VISTAS = Path("seen.json")
+from dotenv import load_dotenv
+
+load_dotenv()
+
+VISTAS = Path(os.environ.get("DATOS_DIR", ".")) / "seen.json"
 
 
 def solo_recientes(noticias: list[dict], horas: int = 36) -> list[dict]:

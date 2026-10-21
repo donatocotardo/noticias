@@ -1,11 +1,15 @@
 import html
 import json
+import os
 import re
 import unicodedata
 from pathlib import Path
 
-RUTA = Path("topics.json")
+from dotenv import load_dotenv
 
+load_dotenv()
+
+RUTA = Path(os.environ.get("DATOS_DIR", ".")) / "topics.json"
 
 def cargar_temas() -> dict[str, list[str]]:
     if not RUTA.exists():

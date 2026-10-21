@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: noticias
@@ -19,6 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Descargar datos privados
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.DATOS_REPO }}
+          token: ${{ secrets.DATOS_TOKEN }}
+          path: datos
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -28,6 +35,7 @@ jobs:
 
       - name: Enviar noticias
         env:
+          DATOS_DIR: datos
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -35,14 +43,16 @@ jobs:
         run: python main.py --enviar
 
       - name: Guardar noticias vistas
+        working-directory: datos
         run: |
-          if [ -f seen.json ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add seen.json
-            if ! git diff --cached --quiet; then
-              git commit -m "chore: actualizar historial de noticias vistas"
-              git pull --rebase
-              git push
-            fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: actualizar historial de noticias vistas"
+            for i in 1 2 3; do
+              if git pull --rebase && git push; then exit 0; fi
+              sleep 5
+            done
+            exit 1
           fi

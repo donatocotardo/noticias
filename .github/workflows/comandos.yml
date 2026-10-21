@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: comandos
@@ -19,6 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Descargar datos privados
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.DATOS_REPO }}
+          token: ${{ secrets.DATOS_TOKEN }}
+          path: datos
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -28,19 +35,22 @@ jobs:
 
       - name: Atender comandos
         env:
+          DATOS_DIR: datos
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python bot.py --una-vez
 
       - name: Guardar cambios de temas
+        working-directory: datos
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add topics.json
+          git add -A
           if ! git diff --cached --quiet; then
-            git commit -m "Actualizar topics.json desde Telegram"
+            git commit -m "chore: actualiza topics.json desde Telegram"
             for i in 1 2 3; do
-              git pull --rebase && git push && break
+              if git pull --rebase && git push; then exit 0; fi
               sleep 5
             done
+            exit 1
           fi
