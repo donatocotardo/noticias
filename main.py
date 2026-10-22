@@ -1,4 +1,9 @@
 import argparse
+import os
+from datetime import datetime, timezone
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 from mensaje import formatear
 from noticias import obtener_todas
@@ -11,13 +16,28 @@ from seleccion import (
     quitar_vistas,
     solo_recientes,
 )
-from utils import enviar_mensajes
 from temas import cargar_temas, filtrar
+from utils import enviar_mensajes
+
+load_dotenv()
 
 MAX_ENVIO = 12
+MARCA = Path(os.environ.get("DATOS_DIR", ".")) / "ultimo_envio.txt"
 
 
-def main(enviar: bool) -> None:
+def _hoy() -> str:
+    return datetime.now(timezone.utc).date().isoformat()
+
+
+def _enviado_hoy() -> bool:
+    return MARCA.exists() and MARCA.read_text().strip() == _hoy()
+
+
+def main(enviar: bool, una_al_dia: bool = False, semantico: bool = False) -> None:
+    if enviar and una_al_dia and _enviado_hoy():
+        print("Ya se envió el resumen de hoy: nada que hacer")
+        return
+
     temas = cargar_temas()
     todas = obtener_todas()
 
@@ -28,14 +48,23 @@ def main(enviar: bool) -> None:
     nuevas = quitar_vistas(recientes, vistas)
     print(f"{len(nuevas)} nuevas (no vistas antes)")
 
+    if semantico:
+        from semantico import filtrar_hibrido
+
+        filtradas = filtrar_hibrido(nuevas, temas)
+    else:
+        filtradas = filtrar(nuevas, temas)
+
     con_tema = sorted(
-        filtrar(nuevas, temas),
+        filtradas,
         key=lambda n: (n["puntuacion"], n["fecha_dt"]),
         reverse=True,
     )
     candidatas = equilibrar(con_tema)
     print(f"{len(con_tema)} con tema, {len(candidatas)} candidatas para el LLM\n")
     if not candidatas:
+        if enviar and todas:  # si no se descargó nada, no damos el día por hecho
+            MARCA.write_text(_hoy())
         return
 
     elegidas = resumir(candidatas, temas)[:MAX_ENVIO]
@@ -55,6 +84,7 @@ def main(enviar: bool) -> None:
     marcar_vistas(candidatas, vistas)
     guardar_vistas(vistas)
     print("seen.json actualizado")
+    MARCA.write_text(_hoy())
 
 
 if __name__ == "__main__":
@@ -64,4 +94,15 @@ if __name__ == "__main__":
         action="store_true",
         help="enviar por Telegram y guardar las noticias evaluadas en seen.json",
     )
-    main(parser.parse_args().enviar)
+    parser.add_argument(
+        "--una-al-dia",
+        action="store_true",
+        help="no hacer nada si hoy ya se envió el resumen",
+    )
+    parser.add_argument(
+        "--semantico",
+        action="store_true",
+        help="usar embeddings además de las palabras clave",
+    )
+    args = parser.parse_args()
+    main(args.enviar, args.una_al_dia, args.semantico)
