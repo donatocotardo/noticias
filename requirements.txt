@@ -2,3 +2,5 @@ requests
 python-dotenv
 feedparser
 google-genai
+fastembed
+numpy

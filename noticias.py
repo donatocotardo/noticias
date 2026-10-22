@@ -7,8 +7,14 @@ import requests
 
 from temas import limpiar_html
 
-HEADERS = {"User-Agent": "Mozilla/5.0 (agente-noticias)"}
-
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+    ),
+    "Accept": "application/rss+xml, application/xml;q=0.9, text/xml;q=0.8, */*;q=0.7",
+    "Accept-Language": "es-ES,es;q=0.9",
+}
 
 def cargar_feeds(ruta: str = "feeds.json") -> list[dict]:
     return json.loads(Path(ruta).read_text(encoding="utf-8"))
